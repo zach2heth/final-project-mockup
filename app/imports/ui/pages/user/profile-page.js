@@ -4,12 +4,14 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { _ } from 'meteor/underscore';
 import { Profiles } from '/imports/api/profile/ProfileCollection';
 import { Interests } from '/imports/api/interest/InterestCollection';
+import { Flairs } from '/imports/api/flairs/FlairCollection';
 
 const displaySuccessMessage = 'displaySuccessMessage';
 const displayErrorMessages = 'displayErrorMessages';
 
 Template.Profile_Page.onCreated(function onCreated() {
   this.subscribe(Interests.getPublicationName());
+  this.subscribe(Flairs.getPublicationName());
   this.subscribe(Profiles.getPublicationName());
   this.messageFlags = new ReactiveDict();
   this.messageFlags.set(displaySuccessMessage, false);
@@ -38,6 +40,14 @@ Template.Profile_Page.helpers({
               return { label: interest.name, selected: _.contains(selectedInterests, interest.name) };
             });
   },
+  flairs() {
+    const profile = Profiles.findDoc(FlowRouter.getParam('username'));
+    const selectedFlairs = profile.interests;
+    return profile && _.map(Flairs.findAll(),
+            function makeInterestObject(interest) {
+              return { label: interest.name, selected: _.contains(selectedFlairs, interest.name) };
+            });
+  },
 });
 
 
@@ -55,8 +65,10 @@ Template.Profile_Page.events({
     const bio = event.target.Bio.value;
     const selectedInterests = _.filter(event.target.Interests.selectedOptions, (option) => option.selected);
     const interests = _.map(selectedInterests, (option) => option.value);
+    const selectedFlairs = _.filter(event.target.Flairs.selectedOptions, (option) => option.selected);
+    const flairs = _.map(selectedFlairs, (option) => option.value);
 
-    const updatedProfileData = { firstName, lastName, title, picture, github, facebook, instagram, bio, interests,
+    const updatedProfileData = { firstName, lastName, title, picture, github, facebook, instagram, bio, flairs,
       username };
 
     // Clear out any old validation errors.

@@ -1,6 +1,7 @@
 import SimpleSchema from 'simpl-schema';
 import BaseCollection from '/imports/api/base/BaseCollection';
 import { Interests } from '/imports/api/interest/InterestCollection';
+import { Flairs } from '/imports/api/flairs/FlairCollection';
 import { check } from 'meteor/check';
 import { Meteor } from 'meteor/meteor';
 import { _ } from 'meteor/underscore';
@@ -26,6 +27,8 @@ class ProfileCollection extends BaseCollection {
       bio: { type: String, optional: true },
       interests: { type: Array, optional: true },
       'interests.$': { type: String },
+      flairs: { type: Array, optional: true },
+      'flairs.$': { type: String },
       title: { type: String, optional: true },
       picture: { type: SimpleSchema.RegEx.Url, optional: true },
       github: { type: SimpleSchema.RegEx.Url, optional: true },
@@ -55,7 +58,7 @@ class ProfileCollection extends BaseCollection {
    * if one or more interests are not defined, or if github, facebook, and instagram are not URLs.
    * @returns The newly created docID.
    */
-  define({ firstName = '', lastName = '', username, bio = '', interests = [], picture = '', title = '', github = '',
+  define({ firstName = '', lastName = '', username, bio = '', interests = [], flairs = [], picture = '', title = '', github = '',
       facebook = '', instagram = '' }) {
     // make sure required fields are OK.
     const checkPattern = { firstName: String, lastName: String, username: String, bio: String, picture: String,
@@ -74,7 +77,15 @@ class ProfileCollection extends BaseCollection {
       throw new Meteor.Error(`${interests} contains duplicates`);
     }
 
-    return this._collection.insert({ firstName, lastName, username, bio, interests, picture, title, github,
+    // Throw an error if any of the passed Flair names are not defined.
+    Flairs.assertNames(flairs);
+
+    // Throw an error if there are duplicates in the passed interest names.
+    if (flairs.length !== _.uniq(flairs).length) {
+      throw new Meteor.Error(`${flairs} contains duplicates`);
+    }
+
+    return this._collection.insert({ firstName, lastName, username, bio, interests, flairs, picture, title, github,
       facebook, instagram });
   }
 
@@ -90,12 +101,13 @@ class ProfileCollection extends BaseCollection {
     const username = doc.username;
     const bio = doc.bio;
     const interests = doc.interests;
+    const flairs = doc.flairs;
     const picture = doc.picture;
     const title = doc.title;
     const github = doc.github;
     const facebook = doc.facebook;
     const instagram = doc.instagram;
-    return { firstName, lastName, username, bio, interests, picture, title, github, facebook, instagram };
+    return { firstName, lastName, username, bio, interests, flairs, picture, title, github, facebook, instagram };
   }
 }
 

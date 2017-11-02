@@ -1,0 +1,1 @@
+import './FlairCollection.js';

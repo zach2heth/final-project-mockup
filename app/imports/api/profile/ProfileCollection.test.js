@@ -10,18 +10,21 @@ import { removeAllEntities } from '/imports/api/base/BaseUtilities';
 if (Meteor.isServer) {
   describe('ProfileCollection', function testSuite() {
     const interestName = 'Software Engineering';
+    const flairName = 'Casual';
     const interestDescription = 'Tools for software development';
     const firstName = 'Philip';
     const lastName = 'Johnson';
     const username = 'johnson';
     const bio = 'I have been a professor of computer science at UH since 1990.';
     const interests = [interestName];
+    const flairs = [flairName];
     const picture = 'http://philipmjohnson.org/headshot.jpg';
     const title = 'Professor Computer Science';
     const github = 'http://github.com/philipjohnson';
     const facebook = 'http://github.com/philipjohnson';
     const instagram = 'http://github.com/philipjohnson';
-    const defineObject = { firstName, lastName, username, bio, interests, picture, title, github, facebook, instagram };
+    const defineObject = { firstName, lastName, username, bio, interests, flairs, picture, title, github, facebook,
+      instagram };
 
     before(function setup() {
       removeAllEntities();
@@ -43,6 +46,7 @@ if (Meteor.isServer) {
       expect(doc.username).to.equal(username);
       expect(doc.bio).to.equal(bio);
       expect(doc.interests[0]).to.equal(interestName);
+      expect(doc.flairs[0]).to.equal(flairName);
       expect(doc.picture).to.equal(picture);
       expect(doc.title).to.equal(title);
       expect(doc.github).to.equal(github);
@@ -61,14 +65,27 @@ if (Meteor.isServer) {
 
     it('#define (illegal interest)', function test() {
       const illegalInterests = ['foo'];
-      const defineObject2 = { firstName, lastName, username, bio, interests: illegalInterests, picture, title,
+      const defineObject2 = { firstName, lastName, username, bio, interests: illegalInterests, flairs, picture, title,
         github, facebook, instagram };
       expect(function foo() { Profiles.define(defineObject2); }).to.throw(Error);
     });
 
     it('#define (duplicate interests)', function test() {
       const duplicateInterests = [interestName, interestName];
-      const defineObject3 = { firstName, lastName, username, bio, interests: duplicateInterests, picture, title,
+      const defineObject3 = { firstName, lastName, username, bio, interests: duplicateInterests, flairs, picture, title,
+        github, facebook, instagram };
+      expect(function foo() { Profiles.define(defineObject3); }).to.throw(Error);
+    });
+    it('#define (illegal flair)', function test() {
+      const illegalFlairs = ['foo'];
+      const defineObject2 = { firstName, lastName, username, bio, interests, flairs: illegalFlairs, picture, title,
+        github, facebook, instagram };
+      expect(function foo() { Profiles.define(defineObject2); }).to.throw(Error);
+    });
+
+    it('#define (duplicate flairs)', function test() {
+      const duplicateFlairs = [flairName, flairName];
+      const defineObject3 = { firstName, lastName, username, bio, interests, flairs: duplicateFlairs, picture, title,
         github, facebook, instagram };
       expect(function foo() { Profiles.define(defineObject3); }).to.throw(Error);
     });
