@@ -79,7 +79,23 @@
         {
           "name": "Evolutionary Computation",
           "description": ""
-        }
+        },
+
+        {
+      "name": "FlairCollection",
+      "contents": [
+        {
+          "name": "Casual",
+          "description": ""
+        },
+        {
+          "name": "Competitive",
+          "description": ""
+        },
+        {
+          "name": "Speedrunning",
+          "description": ""
+        },
       ]
     },
     {
@@ -92,6 +108,9 @@
           "bio": "I am an Associate Professor of Information and Computer Sciences at the University of Hawaii.",
           "interests": [
             "Evolutionary Computation"
+          ],
+          "flairs":[
+            "Casual"
           ],
           "title": "Associate Professor, Information and Computer Sciences",
           "picture": "/images/altenberg.jpg"

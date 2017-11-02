@@ -42,10 +42,10 @@ Template.Profile_Page.helpers({
   },
   flairs() {
     const profile = Profiles.findDoc(FlowRouter.getParam('username'));
-    const selectedFlairs = profile.interests;
+    const selectedFlairs = profile.flairs;
     return profile && _.map(Flairs.findAll(),
-            function makeInterestObject(interest) {
-              return { label: interest.name, selected: _.contains(selectedFlairs, interest.name) };
+            function makeInterestObject(flair) {
+              return { label: flair.name, selected: _.contains(selectedFlairs, flair.name) };
             });
   },
 });
@@ -68,7 +68,8 @@ Template.Profile_Page.events({
     const selectedFlairs = _.filter(event.target.Flairs.selectedOptions, (option) => option.selected);
     const flairs = _.map(selectedFlairs, (option) => option.value);
 
-    const updatedProfileData = { firstName, lastName, title, picture, github, facebook, instagram, bio, flairs,
+    const updatedProfileData = { firstName, lastName, title, picture, github, facebook, instagram, bio, interests,
+      flairs,
       username };
 
     // Clear out any old validation errors.
